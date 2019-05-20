@@ -1066,6 +1066,14 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, int state)
 	if (!(waiter.last_rowner & RWSEM_READER_OWNED))
 		waiter.last_rowner &= RWSEM_RD_NONSPINNABLE;
 
+	/*
+	 * Save the current read-owner of rwsem, if available, and the
+	 * reader nonspinnable bit.
+	 */
+	waiter.last_rowner = atomic_long_read(&sem->owner);
+	if (!(waiter.last_rowner & RWSEM_READER_OWNED))
+		waiter.last_rowner &= RWSEM_RD_NONSPINNABLE;
+
 	if (!rwsem_can_spin_on_owner(sem, RWSEM_RD_NONSPINNABLE))
 		goto queue;
 
@@ -1207,6 +1215,13 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
 		/* rwsem_optimistic_spin() implies ACQUIRE on success */
 		return sem;
 	}
+
+	/*
+	 * Disable reader optimistic spinning for this rwsem after
+	 * acquiring the write lock when the setting of the nonspinnable
+	 * bits are observed.
+	 */
+	disable_rspin = atomic_long_read(&sem->owner) & RWSEM_NONSPINNABLE;
 
 	/*
 	 * Disable reader optimistic spinning for this rwsem after
