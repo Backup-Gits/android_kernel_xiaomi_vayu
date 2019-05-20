@@ -1,3 +1,4 @@
+
 // SPDX-License-Identifier: GPL-2.0
 /* kernel/rwsem.c: R/W semaphores, public implementation
  *
@@ -44,7 +45,6 @@
  * writer nonspinnable bit and clear it only to give writers preference
  * to acquire the lock via optimistic spinning, but not readers. Similar
  * action is also done in the reader slowpath.
-
  * When a writer acquires a rwsem, it puts its task_struct pointer
  * into the owner field. It is cleared after an unlock.
  *
