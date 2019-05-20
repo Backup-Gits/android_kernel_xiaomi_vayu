@@ -876,9 +876,14 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem, bool wlock)
 	 *  2) readers own the lock and spinning time has exceeded limit.
 	 */
 	for (;;) {
+<<<<<<< HEAD
 		enum owner_state owner_state;
 
 		owner_state = rwsem_spin_on_owner(sem, nonspinnable);
+=======
+		enum owner_state owner_state = rwsem_spin_on_owner(sem);
+
+>>>>>>> a25f3d702164 (locking/rwsem: More optimal RT task handling of null owner)
 		if (!(owner_state & OWNER_SPINNABLE))
 			break;
 
