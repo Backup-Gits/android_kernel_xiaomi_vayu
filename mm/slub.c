@@ -1471,7 +1471,6 @@ static inline bool slab_free_freelist_hook(struct kmem_cache *s,
 							   : 0;
 			memset((char *)object + s->inuse, 0,
 			       s->size - s->inuse - rsize);
-
 			if (!IS_ENABLED(CONFIG_SLAB_SANITIZE_VERIFY) && s->ctor)
 				s->ctor(object);
 		}
@@ -1482,6 +1481,17 @@ static inline bool slab_free_freelist_hook(struct kmem_cache *s,
 			*head = object;
 			if (!*tail)
 				*tail = object;
+		} else if (slab_want_init_on_free(s) && s->ctor) {
+			/* Objects that are put into quarantine by KASAN will
+			 * still undergo free_consistency_checks() and thus
+			 * need to show a valid freepointer to check_object().
+			 *
+			 * Note that doing this for all caches (not just ctor
+			 * ones, which have s->offset != NULL)) causes a GPF,
+			 * due to KASAN poisoning and the way set_freepointer()
+			 * eventually dereferences the freepointer.
+			 */
+			set_freepointer(s, object, NULL);
 		}
 	} while (object != old_tail);
 
