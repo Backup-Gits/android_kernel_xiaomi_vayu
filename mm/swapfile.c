@@ -3777,8 +3777,6 @@ static void free_swap_count_continuations(struct swap_info_struct *si)
 	}
 }
 
-<<<<<<< HEAD
-=======
 #if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
 void __cgroup_throttle_swaprate(struct page *page, gfp_t gfp_mask)
 {
@@ -3813,7 +3811,6 @@ void __cgroup_throttle_swaprate(struct page *page, gfp_t gfp_mask)
 }
 #endif
 
->>>>>>> a706da3868a3 (mm, memcg: inline swap-related functions to improve disabled memcg config)
 static int __init swapfile_init(void)
 {
 	int nid;

@@ -1,3 +1,4 @@
+
 /*
  * Linux VM pressure
  *
@@ -254,7 +255,6 @@ static void vmpressure_work_fn(struct work_struct *work)
 
 static unsigned long calculate_vmpressure_win(void)
 {
-<<<<<<< HEAD
 	long x;
 
 	x = global_node_page_state(NR_FILE_PAGES) -
@@ -263,15 +263,6 @@ static unsigned long calculate_vmpressure_win(void)
 			global_zone_page_state(NR_FREE_PAGES);
 	if (x < 1)
 		return 1;
-=======
-	struct vmpressure *vmpr;
-
-	if (mem_cgroup_disabled())
-		return;
-
-	vmpr = memcg_to_vmpressure(memcg);
-
->>>>>>> c08a61590a85 (mm, memcg: add mem_cgroup_disabled checks in vmpressure and swap-related functions)
 	/*
 	 * For low (free + cached), vmpressure window should be
 	 * small, and high for higher values of (free + cached).
