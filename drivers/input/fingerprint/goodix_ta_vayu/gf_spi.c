@@ -77,6 +77,9 @@ static DEFINE_MUTEX(device_list_lock);
 static struct wakeup_source *fp_wakelock = NULL;
 static struct gf_dev gf;
 
+bool report_key_home = false;
+module_param(report_key_home, bool, 0644);
+
 struct gf_key_map maps[] = {
 	{ EV_KEY, GF_KEY_INPUT_HOME },
 	{ EV_KEY, GF_KEY_INPUT_MENU },
@@ -344,7 +347,7 @@ static void gf_kernel_key_input(struct gf_dev *gf_dev, struct gf_key *gf_key)
 		key_input = gf_key->key;
 	}
 
-	pr_debug("%s: received key event[%d], key=%d, value=%d\n",
+	pr_info("%s: received key event[%d], key=%d, value=%d\n",
 		 __func__, key_input, gf_key->key, gf_key->value);
 
 	if ((GF_KEY_POWER == gf_key->key || GF_KEY_CAMERA == gf_key->key)
@@ -355,9 +358,12 @@ static void gf_kernel_key_input(struct gf_dev *gf_dev, struct gf_key *gf_key)
 		input_sync(gf_dev->input);
 	}
 
-	if (GF_KEY_HOME == gf_key->key) {
-		input_report_key(gf_dev->input, key_input, gf_key->value);
-		input_sync(gf_dev->input);
+	if (report_key_home)
+	{
+		if (GF_KEY_HOME == gf_key->key) {
+			input_report_key(gf_dev->input, key_input, gf_key->value);
+			input_sync(gf_dev->input);
+		}
 	}
 }
 
