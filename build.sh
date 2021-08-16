@@ -13,8 +13,8 @@ ZIPNAME="kernel-vayu-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="$HOME/tc/azure-clang"
 DEFCONFIG="vayu_defconfig"
 CHATID=-467253822
-BOT_MSG_URL="https://api.telegram.org/1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendMessage"
-BOT_BUILD_URL="https://api.telegram.org/1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendDocument"
+BOT_MSG_URL="https://api.telegram.org/bot1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendMessage"
+BOT_BUILD_URL="https://api.telegram.org/bot1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendDocument"
 
 tg_post_msg() {
 	curl -s -X POST "$BOT_MSG_URL" -d chat_id="$CHATID" \
