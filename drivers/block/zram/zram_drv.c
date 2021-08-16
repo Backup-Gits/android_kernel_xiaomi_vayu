@@ -1829,12 +1829,8 @@ static ssize_t disksize_store(struct device *dev,
 	struct zram *zram = dev_to_zram(dev);
 	int err;
 
-<<<<<<< HEAD
-	disksize = (u64)SZ_1M * 2560;
-=======
 #ifndef CONFIG_ZRAM_SIZE_OVERRIDE
 	disksize = memparse(buf, NULL);
->>>>>>> 8ad49ba66dde... zram_drv: allow overriding zram size from kernel
 	if (!disksize)
 		return -EINVAL;
 #else

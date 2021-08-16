@@ -8,36 +8,18 @@ sudo apt-get install xz-utils
 sudo apt-get install -y lld
 sudo apt-get install cpio
 #
-SECONDS=0 # builtin bash timer
-ZIPNAME="kernel-vayu-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$HOME/tc/proton-clang"
-DEFCONFIG="vayu_defconfig"
-CHATID=-467253822
-BOT_MSG_URL="https://api.telegram.org/bot1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendMessage"
-BOT_BUILD_URL="https://api.telegram.org/bot1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendDocument"
 
-tg_post_msg() {
-	curl -s -X POST "$BOT_MSG_URL" -d chat_id="$CHATID" \
-	-d "disable_web_page_preview=true" \
-	-d "parse_mode=html" \
-	-d text="$1"
-}
-
-tg_post_build() {
-	#Show the Checksum alongwith caption
-	curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
-	-F chat_id="$CHATID"  \
-	-F "disable_web_page_preview=true" \
-	-F "parse_mode=html" \
-	-F caption="$2 | <b>MD5 Checksum : </b><code>$MD5CHECK</code>"
-}
-
+export ZIPNAME="kernel-vayu-$(date '+%Y%m%d-%H%M').zip"
+export TC_DIR="$HOME/tc/azure-clang"
+export DEFCONFIG="vayu_defconfig"
+export CHATID=-467253822
 export PATH="$TC_DIR/bin:$PATH"
+export GITLOG=$(git log --pretty=format:'"%h : %s"' -1)
 
 if ! [ -d "$TC_DIR" ]; then
-	echo "Proton clang not found! Cloning to $TC_DIR..."
-	if ! git clone -q --depth=1 --single-branch https://github.com/kdrag0n/proton-clang "$TC_DIR"; then
+	echo "Azure clang not found! Cloning to $TC_DIR..."
 	tg_post_msg "Building..."
+	if ! git clone -q --depth=1 --single-branch https://gitlab.com/Panchajanya1999/azure-clang.git "$TC_DIR"; then
 		echo "Cloning failed! Aborting..."
 		exit 1
 	fi
@@ -77,9 +59,12 @@ if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
 	zip -r9 "../$ZIPNAME" * -x .git README.md *placeholder
 	cd ..
 	rm -rf AnyKernel3
-	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
-	echo "Zip: $ZIPNAME"
-	tg_post_build "$ZIPNAME" "Build Success !"
+	echo -e "\nCompleted !"
+	curl -F document=@$ZIPNAME "https://api.telegram.org/bot1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendDocument" \
+        -F chat_id="$CHATID" \
+        -F "disable_web_page_preview=true" \
+        -F "parse_mode=html" \
+        -F caption="For <b>Poco X3 (vayu)</b> <code>$GITLOG</code>"
 	echo
 else
 	echo -e "\nCompilation failed!"
