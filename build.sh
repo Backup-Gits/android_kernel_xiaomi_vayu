@@ -17,9 +17,8 @@ export PATH="$TC_DIR/bin:$PATH"
 export GITLOG=$(git log --pretty=format:'"%h : %s"' -1)
 
 if ! [ -d "$TC_DIR" ]; then
-	echo "Azure clang not found! Cloning to $TC_DIR..."
-	tg_post_msg "Building..."
-	if ! git clone -q --depth=1 --single-branch https://gitlab.com/Panchajanya1999/azure-clang.git "$TC_DIR"; then
+	echo "Proton clang not found! Cloning to $TC_DIR..."
+	if ! git clone -q --depth=1 --single-branch https://github.com/kdrag0n/proton-clang "$TC_DIR"; then
 		echo "Cloning failed! Aborting..."
 		exit 1
 	fi
