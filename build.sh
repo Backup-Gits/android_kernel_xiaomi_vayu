@@ -10,7 +10,7 @@ sudo apt-get install cpio
 #
 SECONDS=0 # builtin bash timer
 ZIPNAME="kernel-vayu-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$HOME/tc/azure-clang"
+TC_DIR="$HOME/tc/proton-clang"
 DEFCONFIG="vayu_defconfig"
 CHATID=-467253822
 BOT_MSG_URL="https://api.telegram.org/bot1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendMessage"
@@ -35,9 +35,9 @@ tg_post_build() {
 export PATH="$TC_DIR/bin:$PATH"
 
 if ! [ -d "$TC_DIR" ]; then
-	echo "Azure clang not found! Cloning to $TC_DIR..."
+	echo "Proton clang not found! Cloning to $TC_DIR..."
+	if ! git clone -q --depth=1 --single-branch https://github.com/kdrag0n/proton-clang "$TC_DIR"; then
 	tg_post_msg "Building..."
-	if ! git clone -q --depth=1 --single-branch https://gitlab.com/Panchajanya1999/azure-clang.git "$TC_DIR"; then
 		echo "Cloning failed! Aborting..."
 		exit 1
 	fi
