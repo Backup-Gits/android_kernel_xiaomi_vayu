@@ -15,6 +15,8 @@ export DEFCONFIG="vayu_defconfig"
 export CHATID=-467253822
 export PATH="$TC_DIR/bin:$PATH"
 export GITLOG=$(git log --pretty=format:'"%h : %s"' -1)
+export KBUILD_BUILD_USER=113
+export KBUILD_BUILD_HOST=DroneCI
 
 if ! [ -d "$TC_DIR" ]; then
 	echo "Proton clang not found! Cloning to $TC_DIR..."
