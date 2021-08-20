@@ -1,16 +1,17 @@
 kind: pipeline
-name: 113's Project
+name: Project Kernel
 
 clone:
   depth: 1
 
 steps:
-- name: Building
-  image: fadlyas/kernel_dockerfile
-  environment:
-    bot_token:
-      from_secret:
-    chat_id:
-      from_secret:
+- name: main
+  image: archlinux:base-devel
   commands:
-  - bash build.sh
+    - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf - &>/dev/null
+    - pacman -Syu --needed --noconfirm wget base-devel xmlto inetutils bc bison cpio git zip unzip python2 &>/dev/null
+    - cd /drone/src
+    - bash build.sh
+trigger:
+  event:
+  - custom
