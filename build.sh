@@ -1,30 +1,42 @@
-
-# Compile script for QuicksilveR kernel
-# Copyright (C) 2020-2021 Adithya R.
-
-#
-apt-get install sudo
-sudo apt-get install xz-utils
-sudo apt-get install -y lld
-sudo apt-get install cpio
-#
-
-export ZIPNAME="kernel-vayu-$(date '+%Y%m%d-%H%M').zip"
 export TC_DIR="$HOME/tc/azure-clang"
-export DEFCONFIG="vayu_defconfig"
-export CHATID=-467253822
 export PATH="$TC_DIR/bin:$PATH"
+
+export DEVICE="Poco X3 Pro (vayu)"
+export ZIPNAME="kernel-vayu-$(date '+%Y%m%d-%H%M').zip"
+export DEFCONFIG="vayu_defconfig"
+
 export GITLOG=$(git log --pretty=format:'"%h : %s"' -1)
 export KBUILD_BUILD_USER=113
 export KBUILD_BUILD_HOST=DroneCI
 
+export CHATID=-467253822
+export TOKEN=1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik
+
+export COMPILER=AzureClang
+
+curl -s -X POST https://api.telegram.org/bot"${TOKEN}"/sendMessage \
+		-d parse_mode="Markdown" \
+		-d chat_id="$CHATID" \
+		-d text="Building... " 
+
+curl -s -X POST https://api.telegram.org/bot"${TOKEN}"/sendMessage \
+		-d parse_mode="Markdown" \
+		-d chat_id="$CHATID" \
+		-d text="Device : $DEVICE || Compiler : $COMPILER || Builder : $KBUILD_BUILD_USER-$KBUILD_BUILD_HOST"
+
+curl -s -X POST https://api.telegram.org/bot"${TOKEN}"/sendMessage \
+		-d parse_mode="Markdown" \
+		-d chat_id="$CHATID" \
+		-d text="$GITLOG"
+
 if ! [ -d "$TC_DIR" ]; then
-	echo "Proton clang not found! Cloning to $TC_DIR..."
-	if ! git clone -q --depth=1 --single-branch https://github.com/kdrag0n/proton-clang "$TC_DIR"; then
+	echo "Azure clang not found! Cloning to $TC_DIR..."
+	if ! git clone -q --depth=1 --single-branch https://gitlab.com/Panchajanya1999/azure-clang.git "$TC_DIR"; then
 		echo "Cloning failed! Aborting..."
 		exit 1
 	fi
 fi
+
 
 if [[ $1 = "-r" || $1 = "--regen" ]]; then
 	make O=out ARCH=arm64 $DEFCONFIG
@@ -61,13 +73,17 @@ if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
 	cd ..
 	rm -rf AnyKernel3
 	echo -e "\nCompleted !"
-	curl -F document=@$ZIPNAME "https://api.telegram.org/bot1376150581:AAHv0Zk5LOBN9qytAzo0AMgiZlGYmP1S6ik/sendDocument" \
+	curl -F document=@$ZIPNAME https://api.telegram.org/bot"${TOKEN}"/sendDocument \
         -F chat_id="$CHATID" \
         -F "disable_web_page_preview=true" \
         -F "parse_mode=html" \
-        -F caption="For <b>Poco X3 (vayu)</b> <code>$GITLOG</code>"
+        -F caption="Build Success - $DEVICE"
 	echo
 else
 	echo -e "\nCompilation failed!"
+	curl -s -X POST https://api.telegram.org/bot"${TOKEN}"/sendMessage \
+		-d parse_mode="Markdown" \
+		-d chat_id="$CHATID" \
+		-d text="Build Failed - $DEVICE"
 fi
 
